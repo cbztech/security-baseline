@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: |
+  Applies a security-baseline to AWS organization.
+Globals:
+  Function:
+    Tracing: Active
+  Api:
+    TracingEnabled: true
+Resources:
+  SecurityBaseline:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: statemachine/security_baseline.asl.json
+      DefinitionSubstitutions:
+        GuardDutyOrgFunctionArn: !GetAtt GuardDutyOrgFunction.Arn
+        GuardDutyAuditFunctionArn: !GetAtt GuardDutyAuditFunction.Arn
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Description: Schedule to run the security-baseline state machine every 15 minutes
+            Enabled: false
+            Schedule: "rate(15 minutes)"
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GuardDutyOrgFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GuardDutyAuditFunction
+  GuardDutyOrgFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/guardduty_org/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          FUNCTION_NAME: !Ref GuardDutyAuditFunction
+          FUNCTION_ARN: !GetAtt GuardDutyAuditFunction.Arn
+      Timeout: 60
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GuardDutyAuditFunction
+        - Statement:
+            - Sid: AssumeRoleTrustPolicy
+              Effect: Allow
+              Action:
+                - sts:AssumeRole
+              Resource: arn:aws:iam::123456789:role/org-role-name
+        - AmazonGuardDutyFullAccess
+
+  GuardDutyAuditFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/guardduty_audit/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Timeout: 60
+      Policies:
+        - AmazonGuardDutyFullAccess
+
+Outputs:
+  SecurityBaselineArn:
+    Description: "Security Baseline State machine ARN"
+    Value: !Ref SecurityBaseline
+  SecurityBaselineRoleArn:
+    Description: "IAM Role created for security-baseline State machine based on the specified SAM Policy Templates"
+    Value: !GetAtt SecurityBaseline.Arn

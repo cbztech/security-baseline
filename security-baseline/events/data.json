@@ -1,0 +1,17 @@
+{
+  "Data": {
+    "Regions": [
+      "us-west-2"
+    ],
+    "Accounts": [
+      {
+        "AccountId": "123456789",
+        "Email": "aws+sandbox@example.com"
+      },
+      {
+        "AccountId": "987654321",
+        "Email": "aws+prod@example.com"
+      }
+    ]
+  }
+}
