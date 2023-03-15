@@ -57,6 +57,6 @@ Other services that could be added for continual checking/management:
 - SCP organization
 
 ---
-<sub>Attribution</sub>
+##### Attribution
 <sub>*Name shamefully stolen from a similar project authored in Ruby by Rich Adams Ruby.* :joy:</sub>
 
