@@ -56,5 +56,7 @@ Other services that could be added for continual checking/management:
 - AWS Account & Contacts Management
 - SCP organization
 
-#### Attribution
-*Name shamefully stolen from a similar project authored by Rich Adams with Ruby. :D*
+---
+<sub>Attribution</sub>
+<sub>*Name shamefully stolen from a similar project authored in Ruby by Rich Adams Ruby.* :joy:</sub>
+
