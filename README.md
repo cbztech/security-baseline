@@ -7,7 +7,7 @@ This project applies a security-baseline to an AWS organization. The state-machi
 ## Getting Started
 You will need to setup the following before running this SAM application.
 
-1. Configure an assumable role on your Org Master Payer account to allow the Security/Audit account to manage GuardDuty
+1. Configure an assumable role on your Org Master Payer account to allow the Security/Audit account to manage GuardDuty via cross account access
 
 ```json
 {
@@ -39,6 +39,16 @@ Deploy from local cli with regular terraform commands:
 ```bash
 terraform apply
 ```
+
+## Clean Up
+If deployed via command line, easy to clean up with regular terraform commands
+```bash
+terraform destroy
+```
+
+Clean up the following:
+1. Any roles created required to run cross-account terraform
+2. Terraform state and bucket in S3
 
 ## Future
 Other services that could be added for continual checking/management:
